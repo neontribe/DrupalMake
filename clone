@@ -1,0 +1,33 @@
+<pre>
+drush make wightlocations.make wightlocations
+cd wightlocations/
+drush -y si neontabs_profile --db-url=mysql://delme:delme@localhost/delme --account-name=superadmin --account-pass=b191wkm --db-su=root --db-su-pw=$MYSQL_ROOTPASS --site-name=delmesite
+compass compile sites/all/themes/neontabs
+compass compile sites/all/themes/ntwl
+ssh root@192.168.21.44 drush -r /home/wightlocations/www/NeonTABS/demosite sql-dump > dump.sql
+drush sqlq "source dump.sql"
+rsync --delete --progress -a root@192.168.21.44:/home/wightlocations/www/NeonTABS/demosite/sites/default/files sites/default
+vi .htaccess 
+drush cc all
+
+
+
+args:
+db-url=mysql://delme:delme@localhost/delme
+account-name=superadmin
+account-pass=b191wkm
+db-su=root
+db-su-pw=$MYSQL_ROOTPASS
+
+Sample manifest
+</pre>
+
+<?php
+$makefile = "http://192.168.21.27/manifest/wightlocations.make";
+$remoteUrl = "root@192.168.21.44";
+$remotePath = "/home/wightlocations/www/NeonTABS/demosite";
+$profile = "neontabs_profile";
+$sitename = "White Locations";
+?>
+
+// vim: filetype=php
