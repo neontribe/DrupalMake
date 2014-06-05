@@ -55,6 +55,8 @@ then
     exit 1
 fi
 
+set -x
+
 if [ -z "$dburl" ]; then
     dburl="mysql://$_manifest:$_manifest@localhost/$_manifest"
 fi
@@ -79,18 +81,27 @@ if [ -z "$target" ]; then
     target=$_manifest
 fi
 
-rm $_manifest
+rm -f $_manifest
 wget -q $manifest
 source $_manifest.manifest
 
+echo drush make $makefile $target
 drush make $makefile $target
+
+echo cd $target
 cd $target
+
+echo drush -y si $profile --db-url=$dburl --account-name=$accountname --account-pass=$accountpass --db-su=$mysqlrootuser --db-su-pw=$mysqlrootpass --site-name=\"$sitename\"
 drush -y si $profile --db-url=$dburl --account-name=$accountname --account-pass=$accountpass --db-su=$mysqlrootuser --db-su-pw=$mysqlrootpass --site-name=\"$sitename\"
+
 compass compile sites/all/themes/neontabs
 compass compile sites/all/themes/ntwl
+
 ssh $remoteUrl drush -r $remotePath sql-dump > dump.sql
 drush sqlq "source dump.sql"
 rsync --delete --progress -a $remoteUrl:$remotePath/sites/default/files sites/default
 echo "If you are mounting this site on a URL other than the site root then you will"
 echo "need to change the BaseUrl in the .htaccess file, $target/.htaccess"
 drush cc all
+
+set +x
