@@ -33,3 +33,9 @@ Then overwrite the database
 Then rsync the files folder
 
     rsync --delete --progress -a root@stagingNeontabs:/home/wightlocations/www/NeonTABS/demosite/sites/default/files sites/default
+
+## Sample clis
+
+    ./clone http://192.168.21.95/manifest/wightlocations.manifest
+    ./create http://192.168.21.95/manifest/vanillafudge.manifest
+
