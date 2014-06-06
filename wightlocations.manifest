@@ -1,5 +1,0 @@
-makefile=http://192.168.21.95/manifest/wightlocations.make
-remoteUrl=root@192.168.21.44
-remotePath=/home/wightlocations/www/NeonTABS/demosite
-profile=neontabs_profile
-sitename="White Locations"

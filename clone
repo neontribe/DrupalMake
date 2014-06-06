@@ -16,9 +16,13 @@ source `dirname $0`/create $@
 
 set -x
 
+cd $_manifest
+
 ssh $remoteUrl drush -r $remotePath sql-dump > dump.sql
 drush sqlq "source dump.sql"
-rsync --delete --progress -a $remoteUrl:$remotePath/sites/default/files sites/default
+rsync --delete -a $remoteUrl:$remotePath/sites/default/files sites/default
 drush cc all
+
+cd -
 
 set +x

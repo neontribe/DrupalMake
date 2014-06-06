@@ -21,9 +21,12 @@ drush make $makefile $target
 cd $target
 drush -y si $profile --db-url=$dburl --account-name=$accountname --account-pass=$accountpass --db-su=$mysqlrootuser --db-su-pw=$mysqlrootpass --site-name=\"$sitename\"
 
-compass compile sites/all/themes/neontabs
-compass compile sites/all/themes/ntwl
+for x in `find . -name "*.css"`; do
+    compass compile $x
+done
 
 drush cc all
+
+cd -
 
 set +x
