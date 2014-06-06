@@ -1,6 +1,17 @@
 #!/bin/bash
 
 
+source `dirname $0`/processargs $@
+
+# echo -e "Remote Manifest:\t${manifest}";
+# echo -e "Local Manifest:\t\t${_manifest}";
+# echo -e "DB Url:\t\t\t${dburl}";
+# echo -e "Account name:\t\t${accountname}";
+# echo -e "Account password:\t${accountpass}";
+# echo -e "Mysql root username:\t${mysqlrootuser}";
+# echo -e "Mysql root password:\t${mysqlrootpass}";
+# echo -e "Target dir:\t\t${target}";
+
 source `dirname $0`/create $@
 
 set -x

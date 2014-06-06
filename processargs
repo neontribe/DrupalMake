@@ -1,0 +1,85 @@
+#!/bin/bash
+
+NO_ARGS=0
+USAGE="`basename $0` [-u dburl] [-n accountname] [-p accountpass] [-m mysqlroot] [-t target] manifest"
+
+if [ $# -eq "$NO_ARGS" ]  # Script invoked with no command-line args?
+then
+    echo $USAGE
+    cat <<EOF
+Clones a remote drupal site providing it has been created using a make file
+and profile.
+
+The only mandatory parameter is the manifest location.  This must be a valid
+URL.
+
+-u  The DB url to create for this site, mysql://name:passwd@host/dbname this
+    will default to the mysql://manifest:manifest@localhost/manifest where
+    manifest is the basename of the mandatory parameter.
+-n  Account name for the admin account, defaults to superadmin
+-p  Password for the admin account, defaults to password
+-m  The mysql root user:password, this will default to root:$MYSQL_ROOTPASS
+-t  The deployment target locally, defaults to minifest
+
+Sample manifest file:
+
+makefile=http://192.168.21.27/manifest/wightlocations.make
+remoteUrl=root@192.168.21.44
+remotePath=/home/wightlocations/www/NeonTABS/demosite
+profile=neontabs_profile
+sitename="White Locations"
+
+N.B. No spaces between names, equals and values.  Quotes around sitename
+
+EOF
+    exit 1
+fi
+
+while getopts "u:n:p:m:t:" options; do
+    case $options in
+        u)  dburl="$OPTARG";;
+        n)  accountname="$OPTARG";;
+        p)  accountpass="$OPTARG";;
+        m)  mysqlroot="$OPTARG";;
+        t)  target="$OPTARG";;
+    esac
+done
+
+shift $((OPTIND-1))
+manifest=$1
+_manifest=`basename $manifest .manifest`
+
+if [ -z $manifest ]
+then
+    echo $USAGE
+    exit 1
+fi
+
+if [ -z "$dburl" ]; then
+    dburl="mysql://$_manifest:$_manifest@localhost/$_manifest"
+fi
+
+if [ -z "$accountname" ]; then
+    accountname="superadmin"
+fi
+
+if [ -z "$accountpass" ]; then
+    accountpass="password"
+fi
+
+if [ -z "$mysqlroot" ]; then
+    mysqlrootuser=root
+    mysqlrootpass=$MYSQL_ROOTPASS
+else
+    mysqlrootuser=`echo $mysqlroot | awk -F: '{print $1}'`
+    mysqlrootpass=`echo $mysqlroot | awk -F: '{print $2}'`
+fi
+
+if [ -z "$MYSQL_ROOTPASS" ]; then
+    echo -ne "\x1b[33;01mMysql root password is not set, you have 5 seconds to abort \x1b[39;49;00m"
+    for x in 1 2 3 4 5; do sleep 1; echo -n .; done; echo
+fi
+
+if [ -z "$target" ]; then
+    target=$_manifest
+fi
