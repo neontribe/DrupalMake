@@ -28,6 +28,7 @@ remoteUrl=root@192.168.21.44
 remotePath=/home/wightlocations/www/NeonTABS/demosite
 profile=neontabs_profile
 sitename="White Locations"
+settings_module=ntch
 
 N.B. No spaces between names, equals and values.  Quotes around sitename
 

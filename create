@@ -18,15 +18,19 @@ wget -q $manifest
 source $_manifest.manifest
 
 drush make --working-copy --force-gitinfofile $makefile $target
+CWD=`pwd`
 cd $target
-drush -y si $profile --db-url=$dburl --account-name=$accountname --account-pass=$accountpass --db-su=$mysqlrootuser --db-su-pw=$mysqlrootpass --site-name=\"$sitename\"
+drush -y si $profile --db-url=$dburl --account-name=$accountname --account-pass=$accountpass --db-su=$mysqlrootuser --db-su-pw=$mysqlrootpass --site-name="${sitename}"
 
-#for x in `find . -name "*.css"`; do
-#    compass compile $x
-#done
+for x in `find sites/all/themes -type d -maxdepth 1`; do
+    cd $x
+    compass compile
+    cd -
+done
 
 drush cc all
+drush en -y $settings_module
 
-cd -
+cd $CWD
 
 set +x
