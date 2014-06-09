@@ -17,7 +17,7 @@ rm -f $_manifest
 wget -q $manifest
 source $_manifest.manifest
 
-drush make --working-copy $makefile $target
+drush make --working-copy --force-gitinfofile $makefile $target
 cd $target
 drush -y si $profile --db-url=$dburl --account-name=$accountname --account-pass=$accountpass --db-su=$mysqlrootuser --db-su-pw=$mysqlrootpass --site-name=\"$sitename\"
 
