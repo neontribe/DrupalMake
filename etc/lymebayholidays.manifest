@@ -1,0 +1,6 @@
+makefile=http://192.168.21.95/manifest/lymebayholidays.make
+remoteUrl=root@192.168.21.44
+remotePath=/home/lymebayholidays/www
+profile=neontabs_profile
+sitename=LymeBay
+settings_module=neontabs_cust_lb
