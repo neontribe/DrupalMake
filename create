@@ -2,22 +2,25 @@
 
 source `dirname $0`/processargs $@
 
-# echo -e "Remote Manifest:\t${manifest}";
-# echo -e "Local Manifest:\t\t${_manifest}";
-# echo -e "DB Url:\t\t\t${dburl}";
-# echo -e "Account name:\t\t${accountname}";
-# echo -e "Account password:\t${accountpass}";
-# echo -e "Mysql root username:\t${mysqlrootuser}";
-# echo -e "Mysql root password:\t${mysqlrootpass}";
-# echo -e "Target dir:\t\t${target}";
+if [ ! -z "$verbose" ]; then
+    echo -e "Remote Manifest:\t${manifest}";
+    echo -e "Local Manifest:\t\t${_manifest}";
+    echo -e "DB Url:\t\t\t${dburl}";
+    echo -e "Account name:\t\t${accountname}";
+    echo -e "Account password:\t${accountpass}";
+    echo -e "Mysql root username:\t${mysqlrootuser}";
+    echo -e "Mysql root password:\t${mysqlrootpass}";
+    echo -e "Target dir:\t\t${target}";
 
-set -x
+    set -x
+
+fi
 
 rm -f $_manifest
 wget -q $manifest
 source $_manifest.manifest
 
-drush make --working-copy --force-gitinfofile $makefile $target
+drush make $wc --force-gitinfofile $makefile $target
 CWD=`pwd`
 cd $target
 drush -y si $profile --db-url=$dburl --account-name=$accountname --account-pass=$accountpass --db-su=$mysqlrootuser --db-su-pw=$mysqlrootpass --site-name="${sitename}"
@@ -33,4 +36,6 @@ drush en -y $settings_module
 
 cd $CWD
 
-set +x
+if [ ! -z "$verbose" ]; then
+    set +x
+fi

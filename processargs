@@ -20,6 +20,8 @@ URL.
 -p  Password for the admin account, defaults to password
 -m  The mysql root user:password, this will default to root:$MYSQL_ROOTPASS
 -t  The deployment target locally, defaults to minifest
+-w  Working copy, include .git folder in the modules
+-v  Be verbose (adds a set -x to the main script)
 
 Sample manifest file:
 
@@ -36,13 +38,15 @@ EOF
     exit 1
 fi
 
-while getopts "u:n:p:m:t:" options; do
+while getopts "u:n:p:m:t:wv" options; do
     case $options in
         u)  dburl="$OPTARG";;
         n)  accountname="$OPTARG";;
         p)  accountpass="$OPTARG";;
         m)  mysqlroot="$OPTARG";;
         t)  target="$OPTARG";;
+        w)  wc="--working-copy";;
+        v)  verbose="-v";;
     esac
 done
 
