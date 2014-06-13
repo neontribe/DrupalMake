@@ -20,7 +20,7 @@ rm -f $_manifest
 wget -q $manifest
 source $_manifest.manifest
 
-drush make $wc --force-gitinfofile $makefile $target
+drush make $wc $makefile $target
 CWD=`pwd`
 cd $target
 drush -y si $profile --db-url=$dburl --account-name=$accountname --account-pass=$accountpass --db-su=$mysqlrootuser --db-su-pw=$mysqlrootpass --site-name="${sitename}"
