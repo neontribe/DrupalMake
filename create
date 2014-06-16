@@ -16,9 +16,17 @@ if [ ! -z "$verbose" ]; then
 
 fi
 
-rm -f $_manifest
+time=`date +"%y%m%d_%H-%M"`
+
+if [ -f "$_manifest.manifest" ]; then
+    mv $_manifest.manifest $_manifest.manifest.$time
+fi
 wget -q $manifest
 source $_manifest.manifest
+
+if [ -d "$target" ]; then
+    mv $target $target.$time
+fi
 
 drush make $wc $makefile $target
 CWD=`pwd`
