@@ -80,7 +80,7 @@ else
     mysqlrootpass=`echo $mysqlroot | awk -F: '{print $2}'`
 fi
 
-if [ -z "$MYSQL_ROOTPASS" ]; then
+if [ -z "$mysqlroot" ]; then
     echo -ne "\x1b[33;01mMysql root password is not set, you have 5 seconds to abort \x1b[39;49;00m"
     for x in 1 2 3 4 5; do sleep 1; echo -n .; done; echo
 fi
