@@ -133,6 +133,7 @@ if [ ! -z "$remoteUrl" ]; then
     ssh $remoteUrl drush -r $remotePath sql-dump > dump.sql
     drush sqlq "source dump.sql"
     rsync --delete -a $remoteUrl:$remotePath/sites/default/files sites/default
+    drush cc all
 fi
 
 cd $CWD
