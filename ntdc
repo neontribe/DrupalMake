@@ -147,6 +147,11 @@ Disallow: /
 EOF
 fi
 
+# htaccess
+if [ ! -z "$htaccess" ]; then
+    wget -O .htaccess $htaccess
+fi
+
 cd $CWD
 
 if [ ! -z "$verbose" ]; then
