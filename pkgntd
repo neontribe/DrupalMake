@@ -1,0 +1,56 @@
+#!/bin/bash
+
+ESC_SEQ="\x1b["
+COL_RESET=$ESC_SEQ"39;49;00m"
+COL_RED=$ESC_SEQ"31;01m"
+COL_GREEN=$ESC_SEQ"32;01m"
+COL_YELLOW=$ESC_SEQ"33;01m"
+COL_BLUE=$ESC_SEQ"34;01m"
+COL_MAGENTA=$ESC_SEQ"35;01m"
+COL_CYAN=$ESC_SEQ"36;01m"
+
+which dch > /dev/null
+if [ 0 != "$?" ]; then
+    echo -e "${COL_RED}dch not installed, cannot proceed${COL_RESET}"
+    exit 1
+fi
+
+PACKAGE_NAME='testdr'
+VERSION=1.0.1
+DRUPAL_ROOT=/var/www
+
+mkdir $DRUPAL_ROOT/debian
+CWD=`pwd`
+cd $DRUPAL_ROOT/debian
+
+dch --create -v $VERSION --package $PACKAGE_NAME 
+
+echo 9>compat
+
+cat >control<<EOF
+Source: hithere
+Maintainer: Lars Wirzenius <liw@liw.fi>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.2
+Build-Depends: debhelper (>= 9)
+
+Package: hithere
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: greet user
+ hithere greets the user, or the world.
+EOF
+
+touch copyright
+
+cat >rules<<EOF
+#!/usr/bin/make -f
+%:
+	dh $@
+EOF
+
+mkdir source
+echo "3.0 (quilt)" > source/format
+
+debuild -us -uc
