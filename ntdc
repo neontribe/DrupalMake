@@ -136,6 +136,17 @@ if [ ! -z "$remoteUrl" ]; then
     drush cc all
 fi
 
+# Robots.txt
+if [ ! -z "$robots" ]; then
+    wget -O robots.txt $robots
+else
+    # Assume a dev site
+    cat >robots.txt<<EOF
+User-agent: *
+Disallow: /
+EOF
+fi
+
 cd $CWD
 
 if [ ! -z "$verbose" ]; then
