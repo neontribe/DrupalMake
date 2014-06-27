@@ -15,42 +15,68 @@ if [ 0 != "$?" ]; then
     exit 1
 fi
 
-PACKAGE_NAME='testdr'
+PACKAGE_NAME='testdr-1.0.1'
 VERSION=1.0.1
-DRUPAL_ROOT=/var/www
+DRUPAL_ROOT=/home/tobias/workspace/Cottaging/DrupalMake/testdr-1.0.1
+DESCRIPTION="Airhead clown fudge monkeyfighting"
 
-mkdir $DRUPAL_ROOT/debian
+mkdir -p $DRUPAL_ROOT/debian
 CWD=`pwd`
-cd $DRUPAL_ROOT/debian
+cd $DRUPAL_ROOT
 
-dch --create -v $VERSION --package $PACKAGE_NAME 
+if [ ! -f $DRUPAL_ROOT/debian/changelog ]; then
+    dch --create -v $VERSION --package $PACKAGE_NAME 
+fi
 
-echo 9>compat
+echo "9" > $DRUPAL_ROOT/debian/compat
 
-cat >control<<EOF
-Source: hithere
-Maintainer: Lars Wirzenius <liw@liw.fi>
+cat >$DRUPAL_ROOT/debian/control<<EOF
+Source: $PACKAGE_NAME
+Maintainer: Toby Batch <tobias@neontribe.co.uk>
 Section: misc
 Priority: optional
-Standards-Version: 3.9.2
+Standards-Version: 3.9.5
 Build-Depends: debhelper (>= 9)
 
-Package: hithere
+Package: $PACKAGE_NAME
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm | php5, php5-mysql | php5-mysqli | php5-mysqlnd, php5-mcrypt, php5-json, debconf (>= 0.5) | debconf-2.0, dbconfig-common, php-gettext, ucf (>= 0.28)
+Recommends: apache2 | lighttpd | httpd, php5-gd, mysql-client
+Suggests: mysql-server
 Description: greet user
- hithere greets the user, or the world.
+ $DESCRIPTION
 EOF
 
-touch copyright
+cat >$DRUPAL_ROOT/debian/copyright<<EOF
+This package was debianized by Norbert Tretkowski <nobse@debian.org> on
+Thu, 29 May 2003 14:43:17 +0200.
 
-cat >rules<<EOF
+It was downloaded from http://www.apsis.ch/pound/
+
+Upstream Author: Robert Segall <roseg@apsis.ch>
+
+Copyright (C) 2002-2007 Apsis GmbH
+
+Pound is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+Pound is distributed under the GPL with the additional
+exemption that compiling, linking, and/or using OpenSSL is allowed.
+
+
+The GPLv3 is located at /usr/share/common-licenses/GPL-3 on your Debian
+system.
+EOF
+
+cat >$DRUPAL_ROOT/debian/rules<<EOF
 #!/usr/bin/make -f
 %:
-	dh $@
+	dh \$@
 EOF
 
-mkdir source
-echo "3.0 (quilt)" > source/format
+mkdir -p $DRUPAL_ROOT/debian/source
+echo "3.0 (quilt)" > -p $DRUPAL_ROOT/debian/source/format
 
 debuild -us -uc
