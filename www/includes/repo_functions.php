@@ -1,4 +1,6 @@
 <?php
+include(__DIR__ . '/config.php');
+
 // Functions
 // Fetches list of all repos on Neontribes github
 function fetchRepos() {
@@ -87,5 +89,32 @@ function fetchBranches($repo) {
 // Check if a string ends with a given string
 function endsWith($str, $sub) {
     return (substr($str, strlen($str) - strlen($sub)) === $sub);
+}
+
+function repos ($update = false)
+{
+    $currentSeconds = time();
+    if ((!(apc_exists('LAST_REPO_CHECK') && ($currentSeconds - apc_fetch('LAST_REPO_CHECK')) < (60 * 60))) || $update == "true") {
+        // This loops through each repo and gets it name and adds it to an array if based on the output of the infoFile function
+        $json_decoded = fetchRepos();
+        for ($i = 0; $i < count($json_decoded); $i++) {
+            $name = $json_decoded[$i]['name'];
+            $name_exists = infoFile($name);
+
+            if ($name_exists == false) {
+            } else {
+                $branch[] = $name;
+            }
+        }
+
+        // Put repo name in array as $array[name][name]
+        //$repos[$repo] = $branch;
+        $repos = $branch;
+
+        apc_store('LAST_REPO_CHECK', $currentSeconds);
+        apc_store('REPOS', $repos);
+    }
+    
+    return apc_fetch('REPOS');
 }
 ?>

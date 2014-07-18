@@ -1,19 +1,14 @@
 {extends file="page.tpl"}
 {block name=body}
-        {if $error == ""}
-        <form method="GET" action="make.php">
-            Project Name: <input type="text" name="projectname" value="Enter project name"/><br />
-            {foreach from=$repositories item=reponame}
-            <h3>Repository: {$reponame}</h3>
-            <input type="hidden" name="repo[]" value="{$reponame}" />
-            Branches:
-            <select name="{$reponame}">
-                {html_options values=$branches[$reponame] output=$branches[$reponame] selected='master'}
-            </select><br /><br />
-            {/foreach}
-        <input type="submit" value="Generate Make File">
-        </form>
-        {else}
-        {$error}
-        {/if}
+            <h2>List of available Neontribe repositories on Github:</h2>
+            <form method="GET" action="branches.php">
+                {html_checkboxes name='repo' values=$repos output=$repos separator='<br />' labels=FALSE}
+                <input type="hidden" name="modify" value="NO" />
+                <br />
+                <button class="right">Next &rArr;</button>
+            </form>
+            <form method="GET" action="repos.php">
+                <input type="hidden" name="update" value="true" />
+                <button>Update Repo List</button>
+            </form>
 {/block}
