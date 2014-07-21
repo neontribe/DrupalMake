@@ -8,6 +8,5 @@ $name = $_GET['name'];
 
 // Assign variables to be used in template files and the display the page
 $smarty->assign('PROJECT_NAME', $name);
-
 $smarty->display('manifest.tpl');
 ?>

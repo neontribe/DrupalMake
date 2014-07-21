@@ -43,21 +43,30 @@ $handle = fopen($file, "r");
 
 if ($handle) {
     while (($line = fgets($handle)) !== false) {
+        //  is the line a comment or a header
         if (substr($line, 0, 1) === ';' || substr($line, 0, 4) === 'core' || substr($line, 0, 3) === 'api' || substr($line, 0, 9) == 'libraries') {
+            // if so, ignore
             continue;
         }
+        
+        // is the project described in the line a neon tribe project?
         $found = false;
         foreach ($neon_projects as $frank) {
             if (strpos($line, $frank) != FALSE) {
                 $found = true;
             }
         }
+        // if so, ignore, these should be detected
         if ($found) {
             continue;
         }
+        
+        // ignore blank lines
         if ($line == "\n") {
             continue;
         }
+        
+        // append the line
         $o_projects[$line] = $line;
     }
 } else {
@@ -79,7 +88,11 @@ foreach ($neon_projects as $neon_projects_key) {
     $neon_projects_names[] = $neon_projects[$neon_projects_key];
 }
 
+// all relevant NeonTribe GitHub repositories
+// TODO don't assume that cache should be used
 $repos = repos(false);
+
+// every relevant NeonTribe GitHub repository that is not currently detected
 $other_repos = array_diff($repos, $neon_projects_names);
 
 $smarty = new Smarty;

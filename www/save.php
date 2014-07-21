@@ -13,6 +13,7 @@ $type = $_POST['type'];
 $response = "";
 
 if ($type == "manifest") {
+    // generate a manifest from provided values
     $projectname = $_POST['projectname'];
     $remoteurl = $_POST['remoteurl'];
     $remotepath = $_POST['remotepath'];
@@ -40,19 +41,23 @@ settings_module=" . $settingsmodule;
 
 if ($isNew == "NO") {
     if (file_exists($path) && $overwrite) {
+        // overwrite potentially pre-existing file and save manifest
         $fp = fopen($path, "wb");
         fwrite($fp, $file);
         fclose($fp);
         $response = "File Overwritten";
     } else if (file_exists($path) && !$overwrite) {
+        // request the user to confirm overwrite or go back
         $response = "File already exists, <a onclick='goBack()' title='Go back'>Go Back</a>";
     } else {
+        // no conflicts, save file
         $fp = fopen($path, "wb");
         fwrite($fp, $file);
         fclose($fp);
         $response = "File Saved";
     }
 } else {
+    // no conflicts, save file
     $fp = fopen($path, "wb");
     fwrite($fp, $file);
     fclose($fp);

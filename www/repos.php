@@ -11,9 +11,9 @@ $smarty = new Smarty();
 $repos = array();
 $branch = array();
 $checked = array();
+$update = $_GET['update']; // whether cached values should be used or not
 
-$update = $_GET['update'];
-
+// names of NeonTribe GitHub repositories applicable to be included as an array of strings
 $repos = repos($update);
 
 // Assign variables to be used in template files and the display the page
