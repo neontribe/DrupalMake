@@ -77,7 +77,7 @@ LoggerConsole.prototype._handleDataLogging = function (data)
 LoggerConsole.prototype._tick = function ()
 {
     // request JSON from the server
-    $.getJSON(this.pollingUrl, this._appendIncomingData.bind(this));
+    $.getJSON(this.pollingUrl, this._handleDataLogging.bind(this));
     
     // if we're not done, schedule the next tick
     if (!this.streamFinished)
