@@ -28,7 +28,7 @@ $data["progress"] = apc_fetch('PROGRESS_' . $id);
 echo json_encode($data);
 
 // if the task is complete
-if ($data->complete) {
+if ($data['complete']) {
     // remove all traces of existence
     apc_delete('PROGRESS_' . $id);
 } else {
