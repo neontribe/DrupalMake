@@ -84,7 +84,9 @@ projects[xmlsitemap][version] = "2.0"
 projects[{$reponame}][download][type] = "git"
 projects[{$reponame}][download][url] = "git@github.com:neontribe/{$reponame}.git"
 projects[{$reponame}][download][branch] = "{$REPO_BRANCH[$reponame]}"
+{if $reponame|strstr:"_theme"}{elseif $reponame|strstr:"_profile"}{else}
 projects[{$reponame}][subdir] = "custom"
+{/if}
 projects[{$reponame}][type] = "{if $reponame|strstr:"_theme"}theme{elseif $reponame|strstr:"_profile"}profile{else}module{/if}"
     
 {/foreach}

@@ -62,7 +62,8 @@ $stdin = null;
 fwrite($pipes[0], $stdin);
 fclose($pipes[0]);
 
-// this should read the stderr output, however, this does not appear to be working :( (TODO)
+// while possible, read from stdout and cache read lines, so they can be picked up through polling
+// TODO read stdout and stderr simultaneously
 while (!feof($pipes[1])) {
     $buffer = fgets($pipes[1]);
     $buffer = trim(htmlspecialchars($buffer));
@@ -78,11 +79,9 @@ while (!feof($pipes[1])) {
     apc_store($apc_progress_key, $linesSoFar, 1000);
 }
 
-// clear-up
 fclose($pipes[1]);
 
-// while possible, read from stdout and cache read lines, so they can be picked up through polling
-// TODO read stdout and stderr simultaneously
+// this should read the stderr output, however, this does not appear to be working :( (TODO)
 while (!feof($pipes[2])) {
     $buffer = fgets($pipes[2]);
     $buffer = trim(htmlspecialchars($buffer));
@@ -99,6 +98,7 @@ while (!feof($pipes[2])) {
     apc_store($apc_progress_key, $linesSoFar, 1000);
 }
 
+// clear-up
 fclose($pipes[2]);
 proc_close($proc);
 
