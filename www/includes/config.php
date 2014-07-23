@@ -16,7 +16,7 @@ $config_modify_template = 'modify_template.tpl';
 // Location of drush installation
 $drush_path = '/usr/local/share/drush';
 
-// Where to build the project to (is fed into ntdc)
+// Where to build the project to (is fed into ntdc); should be made unique per-build
 $build_target = '/var/www/html/drupal-make-build';
 
 $mysql_root_pass = 'password';
