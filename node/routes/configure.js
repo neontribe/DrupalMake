@@ -6,7 +6,7 @@ function registerMiddleware (app)
 
 module.exports = exports = registerMiddleware;
 
-var PUBLIC_ROOT = __dirname + '/public';
+var PUBLIC_ROOT = __dirname + '/..//public';
 
 function handleConfigure (request, response)
 {
