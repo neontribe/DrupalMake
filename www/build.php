@@ -28,6 +28,7 @@ chdir(__DIR__);
 // Assign variables to be used in template files and the display the page
 $smarty->assign('hash', $hash);
 $smarty->assign('cmd', $cmd);
+// TODO show errors
 $smarty->display('build.tpl');
 
 // say goodbye to the browser further
