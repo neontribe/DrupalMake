@@ -1,0 +1,12 @@
+{
+    "general": {
+        "exportPath": "replace this with where you want built projects to go"
+    },
+    "github": {
+        "oAuthToken": "replace this with your GitHub OAuthToken; it will probably be a 40 character hexadecimal value"
+    },
+    "mySql": {
+        "rootPass": "replace this with the root password your MySql user"
+    }
+    
+}
