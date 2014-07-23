@@ -1,10 +1,10 @@
 <?php
-//header("content-type: text/plain");
 // Imports and Declarations
 include(__DIR__ . '/libs/Smarty.class.php');
 include(__DIR__ . '/includes/repo_functions.php');
-require '/home/adam/tmp/drush/commands/make/make.utilities.inc';
-require '/home/adam/tmp/drush/includes/drupal.inc';
+
+require $drush_path . '/commands/make/make.utilities.inc';
+require $drush_path . '/includes/drupal.inc';
 
 session_start();
 

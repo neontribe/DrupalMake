@@ -14,6 +14,8 @@ $response = "";
 
 if ($type == "manifest") {
     // generate a manifest from provided values
+    $save_path = __DIR__ . "/manifest/";
+    
     $projectname = $_POST['projectname'];
     $remoteurl = $_POST['remoteurl'];
     $remotepath = $_POST['remotepath'];
@@ -21,8 +23,10 @@ if ($type == "manifest") {
     $sitename = $_POST['sitename'];
     $settingsmodule = $_POST['settingsmodule'];
     
+    $make_url = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['REQUEST_URI']) . 'make/' . $projectname . '.make';
+    
     $manifest = 
-    "makefile=" . $make_file_location . $projectname . ".make
+    "makefile=" . $make_url . "
 remoteUrl=" . $remoteurl . "
 remotePath=" . $remotepath . "
 profile=" . $profile . "
@@ -34,9 +38,12 @@ settings_module=" . $settingsmodule;
     $path_no_extention = $save_path . $projectname;
     
     $name = $projectname;
-} else {
+} else if ($type == "make") {
+    $save_path = __DIR__ . "/make/";
     $path = $save_path . $name . "." . $type;
     $path_no_extention = $save_path . $name;
+} else {
+    // TODO account for incorrect type
 }
 
 if ($isNew == "NO") {

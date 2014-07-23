@@ -1,6 +1,7 @@
 {extends file="page.tpl"}
 {block name=body}
             <h2 id="status">Building Site...</h2>
+            <h3>Command: {$cmd}</h3>
             <pre id="progress-log" style="white-space:nowrap;overflow:auto;"></pre>
             <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
             <script src="logger-console.js"></script>

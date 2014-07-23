@@ -1,16 +1,18 @@
 <?php
+
 // Imports and Declarations
 include(__DIR__ . '/libs/Smarty.class.php');
 include(__DIR__ . '/includes/config.php');
+
 $smarty = new Smarty;
 
 $path = $_GET['name'];
 $path_manifest = $path . ".manifest";
 
 // the command to be executed to build
-$cmd = "MYSQL_ROOTPASS=b191wkm ntdc -v -m root:b191wkm -t /var/www/html/adamtest http://localhost/" . basename($path_manifest);
-
-chdir("/var/www/html/DrupalMake/www/");
+$manifest_url = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['REQUEST_URI']) . 'manifest/' . basename($path_manifest);
+$users_cmd = "ntdc -v -m root:" . $mysql_root_pass . " -t " . $build_target . " " . $manifest_url;
+$cmd = 'sudo su ntdeploy -c \'' . $users_cmd . '\'';
 
 // a value to uniquely (hopefully) identify the build job, so status updates can be gotten through the polling of progress.php
 $hash = md5(uniqid(rand(), true));
@@ -21,8 +23,11 @@ header("Connection: close");
 ignore_user_abort(true);
 ob_start();
 
+chdir(__DIR__);
+
 // Assign variables to be used in template files and the display the page
 $smarty->assign('hash', $hash);
+$smarty->assign('cmd', $cmd);
 $smarty->display('build.tpl');
 
 // say goodbye to the browser further
@@ -57,29 +62,9 @@ $stdin = null;
 fwrite($pipes[0], $stdin);
 fclose($pipes[0]);
 
-// while possible, read from stdout and cache read lines, so they can be picked up through polling
-// TODO read stdout and stderr simultaneously
+// this should read the stderr output, however, this does not appear to be working :( (TODO)
 while (!feof($pipes[1])) {
     $buffer = fgets($pipes[1]);
-    $buffer = trim(htmlspecialchars($buffer));
-    
-    // put line into store
-    if (!apc_exists($apc_progress_key)) {
-        apc_add($apc_progress_key, array(), 1000);
-        // apparently this is 1000 seconds but unreliable results were had when the value was 10, which is odd, as it is polled every 1 second
-    }
-    
-    // append new lines to the pre-existing cached lines
-    $linesSoFar = apc_fetch($apc_progress_key);
-    $linesSoFar[] = $buffer;
-    apc_store($apc_progress_key, $linesSoFar, 1000);
-}
-
-fclose($pipes[1]);
-
-// this should read the stderr output, however, this does not appear to be working :(
-while (!feof($pipes[2])) {
-    $buffer = fgets($pipes[2]);
     $buffer = trim(htmlspecialchars($buffer));
     
     // put line into store
@@ -94,6 +79,26 @@ while (!feof($pipes[2])) {
 }
 
 // clear-up
+fclose($pipes[1]);
+
+// while possible, read from stdout and cache read lines, so they can be picked up through polling
+// TODO read stdout and stderr simultaneously
+while (!feof($pipes[2])) {
+    $buffer = fgets($pipes[2]);
+    $buffer = trim(htmlspecialchars($buffer));
+    
+    // put line into store
+    if (!apc_exists($apc_progress_key)) {
+        apc_add($apc_progress_key, array(), 1000);
+        // apparently this is 1000 seconds but unreliable results were had when the value was 10, which is odd, as it is polled every 1 second
+    }
+    
+    // append new lines to the pre-existing cached lines
+    $linesSoFar = apc_fetch($apc_progress_key);
+    $linesSoFar[] = $buffer;
+    apc_store($apc_progress_key, $linesSoFar, 1000);
+}
+
 fclose($pipes[2]);
 proc_close($proc);
 

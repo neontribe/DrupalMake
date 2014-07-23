@@ -3,8 +3,8 @@
             {if $error == ""}
                 <h2>Your new make file called "{$PROJECT_NAME}":</h2>
                 <form method="POST" style="display:inline;" action="save.php">
-                <input type="hidden" name="type" value="make" />
-                <textarea rows="45" cols="122" name="file" style="white-space:nowrap;overflow:auto;">
+                    <input type="hidden" name="type" value="make" />
+                    <textarea rows="45" cols="122" name="file" style="white-space:nowrap;overflow:auto;">
 core = 7.x
 
 api = 2
