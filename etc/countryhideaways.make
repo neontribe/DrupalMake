@@ -8,7 +8,7 @@ projects[drupal][version] = "7.27"
 ; Please fill the following out. Type may be one of get, git, bzr or svn,
 ; and url is the url of the download.
 projects[neontabs_profile][download][type] = "git"
-projects[neontabs_profile][download][url] = "git@github.com:neontribe/neontabs_profile.git"
+projects[neontabs_profile][download][url] = "git@bitbucket.org:neontabs/neontabs_profile.git"
 projects[neontabs_profile][type] = "profile"
 projects[neontabs_profile][version] = "unknown"
 
@@ -52,7 +52,7 @@ projects[metatag][version] = "1.0-beta9"
 ; Please fill the following out. Type may be one of get, git, bzr or svn,
 ; and url is the url of the download.
 projects[neontabs_theme][download][type] = "git"
-projects[neontabs_theme][download][url] = "git@github.com:neontribe/neontabs_theme.git"
+projects[neontabs_theme][download][url] = "git@bitbucket.org:neontabs/neontabs_theme.git"
 projects[neontabs_theme][type] = "theme"
 projects[neontabs_theme][version] = "unknown"
 
@@ -60,23 +60,23 @@ projects[neontabs_theme][version] = "unknown"
 ; Please fill the following out. Type may be one of get, git, bzr or svn,
 ; and url is the url of the download.
 projects[neontabs][download][type] = "git"
-projects[neontabs][download][url] = "git@github.com:neontribe/neontabs.git"
+projects[neontabs][download][url] = "git@bitbucket.org:neontabs/neontabs.git"
 projects[neontabs][type] = "module"
 projects[neontabs][subdir] = "custom"
 projects[neontabs][version] = "unknown"
 
 ; Please fill the following out. Type may be one of get, git, bzr or svn,
 ; and url is the url of the download.
-projects[tabs][download][type] = "git"
-projects[tabs][download][url] = "git@github.com:neontribe/nt_tabs.git"
-projects[tabs][type] = "module"
-projects[tabs][subdir] = "custom"
-projects[tabs][version] = "unknown"
+projects[nt_tabs][download][type] = "git"
+projects[nt_tabs][download][url] = "git@bitbucket.org:neontabs/nt_tabs.git"
+projects[nt_tabs][type] = "module"
+projects[nt_tabs][subdir] = "custom"
+projects[nt_tabs][version] = "unknown"
 
 ; Please fill the following out. Type may be one of get, git, bzr or svn,
 ; and url is the url of the download.
 projects[ntch_modules][download][type] = "git"
-projects[ntch_modules][download][url] = "git@github.com:neontribe/ntch_modules.git"
+projects[ntch_modules][download][url] = "git@bitbucket.org:neontabs/ntch_modules.git"
 projects[ntch_modules][type] = "module"
 projects[ntch_modules][subdir] = "custom"
 projects[ntch_modules][version] = "unknown"
@@ -111,7 +111,7 @@ projects[xmlsitemap][version] = "2.0"
 ; Themes
 projects[ntch][type] = "theme"
 projects[ntch][download][type] = "git"
-projects[ntch][download][url] = "https://github.com/neontribe/ntch_theme.git"
+projects[ntch][download][url] = "git@bitbucket.org:neontabs/ntch_theme.git"
 
 ; Libraries
 ; Please fill the following out. Type may be one of get, git, bzr or svn,

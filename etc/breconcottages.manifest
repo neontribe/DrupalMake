@@ -1,0 +1,6 @@
+makefile=http://cottage.neontribe.org/manifest/breconcottages.make
+#remoteUrl=root@192.168.21.44
+#remotePath=/home/breconcottages/www/latest
+profile=neontabs_profile
+sitename=BreconCottages
+settings_module=ntbr_settings

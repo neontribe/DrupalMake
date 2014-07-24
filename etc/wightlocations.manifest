@@ -1,5 +1,7 @@
-makefile=http://192.168.21.95/manifest/wightlocations.make
-remoteUrl=root@192.168.21.44
-remotePath=/home/wightlocations/www/NeonTABS/demosite
+makefile=http://cottage.neontribe.org/manifest/wightlocations.make
+remoteUrl=root@wightlocations.co.uk
+remotePath=/home/cottage_live/www/wightlocations
 profile=neontabs_profile
-sitename="White Locations"
+sitename="Wight Locations"
+settings_module=neontabs_cust_wightloc
+robots=http://cottage.neontribe.org/manifest/robots.txt

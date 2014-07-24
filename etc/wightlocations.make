@@ -82,208 +82,39 @@ projects[xmlsitemap][version] = "2.0"
 
 ; Please fill the following out. Type may be one of get, git, bzr or svn,
 ; and url is the url of the download.
-projects[neontabs_arealoc_page][download][type] = "git"
-projects[neontabs_arealoc_page][download][url] = "http://192.168.21.95/drupal/module/neontabs_arealoc_page/.git"
-projects[neontabs_arealoc_page][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_blog][download][type] = "git"
-projects[neontabs_blog][download][url] = "http://192.168.21.95/drupal/module/neontabs_blog/.git"
-projects[neontabs_blog][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_carousel][download][type] = "git"
-projects[neontabs_carousel][download][url] = "http://192.168.21.95/drupal/module/neontabs_carousel/.git"
-projects[neontabs_carousel][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_comments][download][type] = "git"
-projects[neontabs_comments][download][url] = "http://192.168.21.95/drupal/module/neontabs_comments/.git"
-projects[neontabs_comments][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
 projects[neontabs_cust_wightloc][download][type] = "git"
-projects[neontabs_cust_wightloc][download][url] = "http://192.168.21.95/drupal/module/neontabs_cust_wightloc/.git"
+projects[neontabs_cust_wightloc][download][url] = "git@github.com:neontribe/ntwl.git"
+projects[neontabs_cust_wightloc][subdir] = "custom"
 projects[neontabs_cust_wightloc][type] = "module"
 
 ; Please fill the following out. Type may be one of get, git, bzr or svn,
 ; and url is the url of the download.
-projects[neontabs_featured_image_link][download][type] = "git"
-projects[neontabs_featured_image_link][download][url] = "http://192.168.21.95/drupal/module/neontabs_featured_image_link/.git"
-projects[neontabs_featured_image_link][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_funcunit][download][type] = "git"
-projects[neontabs_funcunit][download][url] = "http://192.168.21.95/drupal/module/neontabs_funcunit/.git"
-projects[neontabs_funcunit][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_glance][download][type] = "git"
-projects[neontabs_glance][download][url] = "http://192.168.21.95/drupal/module/neontabs_glance/.git"
-projects[neontabs_glance][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_homepage_sidebar][download][type] = "git"
-projects[neontabs_homepage_sidebar][download][url] = "http://192.168.21.95/drupal/module/neontabs_homepage_sidebar/.git"
-projects[neontabs_homepage_sidebar][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_image_attributes][download][type] = "git"
-projects[neontabs_image_attributes][download][url] = "http://192.168.21.95/drupal/module/neontabs_image_attributes/.git"
-projects[neontabs_image_attributes][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_menus][download][type] = "git"
-projects[neontabs_menus][download][url] = "http://192.168.21.95/drupal/module/neontabs_menus/.git"
-projects[neontabs_menus][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_permissions][download][type] = "git"
-projects[neontabs_permissions][download][url] = "http://192.168.21.95/drupal/module/neontabs_permissions/.git"
-projects[neontabs_permissions][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_property_highlights][download][type] = "git"
-projects[neontabs_property_highlights][download][url] = "http://192.168.21.95/drupal/module/neontabs_property_highlights/.git"
-projects[neontabs_property_highlights][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_property_info][download][type] = "git"
-projects[neontabs_property_info][download][url] = "http://192.168.21.95/drupal/module/neontabs_property_info/.git"
-projects[neontabs_property_info][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_search][download][type] = "git"
-projects[neontabs_search][download][url] = "http://192.168.21.95/drupal/module/neontabs_search/.git"
-projects[neontabs_search][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_selectlists][download][type] = "git"
-projects[neontabs_selectlists][download][url] = "http://192.168.21.95/drupal/module/neontabs_selectlists/.git"
-projects[neontabs_selectlists][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_social][download][type] = "git"
-projects[neontabs_social][download][url] = "http://192.168.21.95/drupal/module/neontabs_social/.git"
-projects[neontabs_social][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_teaser][download][type] = "git"
-projects[neontabs_teaser][download][url] = "http://192.168.21.95/drupal/module/neontabs_teaser/.git"
-projects[neontabs_teaser][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_themer][download][type] = "git"
-projects[neontabs_themer][download][url] = "http://192.168.21.95/drupal/module/neontabs_themer/.git"
-projects[neontabs_themer][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[neontabs_utility][download][type] = "git"
-projects[neontabs_utility][download][url] = "http://192.168.21.95/drupal/module/neontabs_utility/.git"
-projects[neontabs_utility][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[tabs_areapages][download][type] = "git"
-projects[tabs_areapages][download][url] = "http://192.168.21.95/drupal/module/tabs_areapages/.git"
-projects[tabs_areapages][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[tabs_balancepay][download][type] = "git"
-projects[tabs_balancepay][download][url] = "http://192.168.21.95/drupal/module/tabs_balancepay/.git"
-projects[tabs_balancepay][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[tabs_booking][download][type] = "git"
-projects[tabs_booking][download][url] = "http://192.168.21.95/drupal/module/tabs_booking/.git"
-projects[tabs_booking][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[tabs_entity][download][type] = "git"
-projects[tabs_entity][download][url] = "http://192.168.21.95/drupal/module/tabs_entity/.git"
-projects[tabs_entity][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[tabs_gmap][download][type] = "git"
-projects[tabs_gmap][download][url] = "http://192.168.21.95/drupal/module/tabs_gmap/.git"
-projects[tabs_gmap][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[tabs_imagecache2][download][type] = "git"
-projects[tabs_imagecache2][download][url] = "http://192.168.21.95/drupal/module/tabs_imagecache2/.git"
-projects[tabs_imagecache2][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[tabs_io][download][type] = "git"
-projects[tabs_io][download][url] = "http://192.168.21.95/drupal/module/tabs_io/.git"
-projects[tabs_io][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[tabs_landingpage][download][type] = "git"
-projects[tabs_landingpage][download][url] = "http://192.168.21.95/drupal/module/tabs_landingpage/.git"
-projects[tabs_landingpage][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[tabs_query][download][type] = "git"
-projects[tabs_query][download][url] = "http://192.168.21.95/drupal/module/tabs_query/.git"
-projects[tabs_query][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[tabs_search][download][type] = "git"
-projects[tabs_search][download][url] = "http://192.168.21.95/drupal/module/tabs_search/.git"
-projects[tabs_search][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[tabs_shortlist][download][type] = "git"
-projects[tabs_shortlist][download][url] = "http://192.168.21.95/drupal/module/tabs_shortlist/.git"
-projects[tabs_shortlist][type] = "module"
-
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
-projects[tabs_sitemap][download][type] = "git"
-projects[tabs_sitemap][download][url] = "http://192.168.21.95/drupal/module/tabs_sitemap/.git"
-projects[tabs_sitemap][type] = "module"
-
-; Themes
-; Please fill the following out. Type may be one of get, git, bzr or svn,
-; and url is the url of the download.
 projects[neontabs][download][type] = "git"
-projects[neontabs][download][url] = "http://192.168.21.95/drupal/theme/neontabs/.git"
-projects[neontabs][type] = "theme"
+projects[neontabs][download][url] = "git@github.com:neontribe/neontabs.git"
+projects[neontabs][subdir] = "custom"
+projects[neontabs][type] = "module"
+
+; Please fill the following out. Type may be one of get, git, bzr or svn,
+; and url is the url of the download.
+projects[nt_tabs][download][type] = "git"
+projects[nt_tabs][download][url] = "git@github.com:neontribe/nt_tabs.git"
+projects[nt_tabs][subdir] = "custom"
+projects[nt_tabs][type] = "module"
+
 
 ; Please fill the following out. Type may be one of get, git, bzr or svn,
 ; and url is the url of the download.
 projects[ntwl][download][type] = "git"
-projects[ntwl][download][url] = "http://192.168.21.95/drupal/theme/neontabs_cust_wightloc_theme/.git"
+projects[ntwl][download][url] = "git@github.com:neontribe/ntwl_theme.git"
 projects[ntwl][type] = "theme"
+
+
+# Themes
+; Please fill the following out. Type may be one of get, git, bzr or svn,
+; and url is the url of the download.
+projects[neontabs_theme][download][type] = "git"
+projects[neontabs_theme][download][url] = "git@github.com:neontribe/neontabs_theme.git"
+projects[neontabs_theme][type] = "theme"
 
 ; Libraries
 ; Please fill the following out. Type may be one of get, git, bzr or svn,

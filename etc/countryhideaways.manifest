@@ -1,6 +1,6 @@
-makefile=http://192.168.21.95/manifest/countryhideaways.make
-#remoteUrl=root@192.168.21.44
-#remotePath=/home/lymebayholidays/www/NeonTABS/demosite
+makefile=http://cottage.neontribe.org/manifest/countryhideaways.make
+remoteUrl=root@192.168.21.44
+remotePath=/home/cottage_staging/www/countryhideaways/latest
 profile=neontabs_profile
 sitename=CountryHideaways
-settings_module=ntch
+settings_module=ntch_settings
