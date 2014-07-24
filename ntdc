@@ -3,6 +3,9 @@
 NO_ARGS=0
 USAGE="`basename $0` [-u dburl] [-n accountname] [-p accountpass] [-m mysqlroot] [-t target] manifest"
 
+# exit on errors, for CI
+set -e
+
 if [ $# -eq "$NO_ARGS" ]  # Script invoked with no command-line args?
 then
     echo $USAGE
@@ -98,6 +101,7 @@ if [ ! -z "$verbose" ]; then
     echo -e "Mysql root username:\t${mysqlrootuser}";
     echo -e "Mysql root password:\t${mysqlrootpass}";
     echo -e "Target dir:\t\t${target}";
+    echo -e "Working copy:\t${wc}";
 
     set -x
 
