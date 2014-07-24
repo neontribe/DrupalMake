@@ -111,7 +111,7 @@ projects[xmlsitemap][version] = "2.0"
 ; Themes
 projects[ntbr_theme][type] = "theme"
 projects[ntbr_theme][download][type] = "git"
-projects[ntbr_theme][download][url] = "https://github.com/neontribe/ntbr_theme.git"
+projects[ntbr_theme][download][url] = "git@bitbucket.org:neontabs/ntbr_theme.git"
 
 ; Libraries
 ; Please fill the following out. Type may be one of get, git, bzr or svn,
