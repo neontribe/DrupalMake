@@ -3,6 +3,9 @@
 NO_ARGS=0
 USAGE="`basename $0` [-u dburl] [-n accountname] [-p accountpass] [-m mysqlroot] [-t target] manifest"
 
+# exit on errors, for CI
+set -e
+
 if [ $# -eq "$NO_ARGS" ]  # Script invoked with no command-line args?
 then
     echo $USAGE
@@ -19,6 +22,7 @@ URL.
 -n  Account name for the admin account, defaults to superadmin
 -p  Password for the admin account, defaults to password
 -m  The mysql root user:password, this will default to root:$MYSQL_ROOTPASS
+-d  Delete and overwrite, don't backup existing files
 -t  The deployment target locally, defaults to minifest
 -w  Working copy, include .git folder in the modules
 -v  Be verbose (adds a set -x to the main script)
@@ -38,12 +42,13 @@ EOF
     exit 1
 fi
 
-while getopts "u:n:p:m:t:wv" options; do
+while getopts "u:n:p:m:t:wdv" options; do
     case $options in
         u)  dburl="$OPTARG";;
         n)  accountname="$OPTARG";;
         p)  accountpass="$OPTARG";;
         m)  mysqlroot="$OPTARG";;
+        m)  delete="1";;
         t)  target="$OPTARG";;
         w)  wc="--working-copy";;
         v)  verbose="-v";;
@@ -98,6 +103,7 @@ if [ ! -z "$verbose" ]; then
     echo -e "Mysql root username:\t${mysqlrootuser}";
     echo -e "Mysql root password:\t${mysqlrootpass}";
     echo -e "Target dir:\t\t${target}";
+    echo -e "Working copy:\t${wc}";
 
     set -x
 
@@ -105,14 +111,18 @@ fi
 
 time=`date +"%y%m%d_%H-%M"`
 
-if [ -f "$_manifest.manifest" ]; then
+if [ -f "$_manifest.manifest" ] && [ -z "$delete" ]; then
     mv $_manifest.manifest $_manifest.manifest.$time
+else
+    rm -rf "$_manifest.manifest"
 fi
 wget -q $manifest
 source $_manifest.manifest
 
-if [ -d "$target" ]; then
+if [ -d "$target" ] && [ -z "$delete" ]; then
     mv $target $target.$time
+else
+    rm -rf $target
 fi
 
 drush --nocolor make $wc $makefile $target

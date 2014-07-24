@@ -14,6 +14,8 @@ set -x
 
 USAGE="$0 /path/to/drupal version"
 
+# Versions must not start with a letter, v1.0.0 bad 1.0.0.RC01 ok
+
 DRUPAL_ROOT=$1
 VERSION=$2
 
@@ -68,6 +70,9 @@ dh_make -c GPL -e ${PACKAGE_NAME}${VERSION}@neontribe.co.uk -n -s -i -y
 
 rm debian/*.{ex,EX}
 
+# Add php dependancies that chef missed
+sed -i -e '/^Depends:/ s/$/ php-apc, php5-gd, php5-curl, php5-mysql, php5-imagick, php5-memcache, php5-memcached, ruby-compass /' debian/control
+
 cat >debian/install<<EOF
 ${PACKAGE_NAME}.tgz /var/www/html/${PACKAGE_NAME}-${VERSION}
 EOF
@@ -110,33 +115,33 @@ case "\$1" in
         chmod 444 /var/www/html/${PACKAGE_NAME}-${VERSION}/sites/default/settings.php
         chmod 555 /var/www/html/${PACKAGE_NAME}-${VERSION}/sites/default
 
-        echo "<VirtualHost *:80>" > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24
-        echo "  ServerAdmin webmaster@localhost" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24
-        echo "  DocumentRoot /var/www/html/${PACKAGE_NAME}-${VERSION}" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24
-        echo "  ErrorLog \${APACHE_LOG_DIR}/error.log" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24
-        echo "  CustomLog \${APACHE_LOG_DIR}/access.log combined" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24
-        echo "  <Directory /var/www/html/${PACKAGE_NAME}-${VERSION}>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24
-        echo "    AllowOverride All" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24
-        echo "  </Directory>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24
-        echo "</VirtualHost>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24
+        echo "<VirtualHost *:80>" > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "  ServerAdmin webmaster@localhost" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "  DocumentRoot /var/www/html/${PACKAGE_NAME}-${VERSION}" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "  ErrorLog /var/log/apache2/error.log" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "  CustomLog /var/log/apache2/access.log combined" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "  <Directory /var/www/html/${PACKAGE_NAME}-${VERSION}>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "    AllowOverride All" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "  </Directory>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "</VirtualHost>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
 
-        echo "<VirtualHost *:80>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "  ServerAdmin webmaster@localhost" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "  DocumentRoot /var/www/html/${PACKAGE_NAME}-${VERSION}" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "  <Directory />" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "    Options FollowSymLinks" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "    AllowOverride None" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "  </Directory>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "  <Directory /var/www/html/${PACKAGE_NAME}-${VERSION}>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "    Options Indexes FollowSymLinks MultiViews" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "    AllowOverride All" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "    Order allow,deny" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "    allow from all" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "  </Directory>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "  ErrorLog \${APACHE_LOG_DIR}/error.log" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "  LogLevel warn" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "  CustomLog \${APACHE_LOG_DIR}/access.log combined" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
-        echo "</VirtualHost>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22
+        echo "<VirtualHost *:80>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "  ServerAdmin webmaster@localhost" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "  DocumentRoot /var/www/html/${PACKAGE_NAME}-${VERSION}" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "  <Directory />" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "    Options FollowSymLinks" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "    AllowOverride None" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "  </Directory>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "  <Directory /var/www/html/${PACKAGE_NAME}-${VERSION}>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "    Options Indexes FollowSymLinks MultiViews" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "    AllowOverride All" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "    Order allow,deny" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "    allow from all" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "  </Directory>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "  ErrorLog /var/log/apache2/error.log" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "  LogLevel warn" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "  CustomLog /var/log/apache2/access.log combined" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "</VirtualHost>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
