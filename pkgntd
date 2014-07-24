@@ -10,6 +10,7 @@ COL_MAGENTA=$ESC_SEQ"35;01m"
 COL_CYAN=$ESC_SEQ"36;01m"
 
 set -e
+set -x
 
 USAGE="$0 /path/to/drupal version"
 
@@ -154,3 +155,4 @@ EOF
 
 cd - && cd $PACKAGE_NAME/$PACKAGE_NAME-$VERSION
 debuild -b -i -us -uc
+set +x
