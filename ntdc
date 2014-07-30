@@ -130,11 +130,13 @@ CWD=`pwd`
 cd $target
 drush --nocolor -y si $profile --db-url=$dburl --account-name=$accountname --account-pass=$accountpass --db-su=$mysqlrootuser --db-su-pw=$mysqlrootpass --site-name="${sitename}"
 
-for x in `find sites/all/themes -type d -maxdepth 1`; do
+set +e
+for x in sites/all/themes/*; do
     cd $x
     compass compile
     cd -
 done
+set -e
 
 drush cc all
 drush en -y $settings_module
