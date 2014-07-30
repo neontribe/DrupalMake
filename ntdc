@@ -130,16 +130,19 @@ CWD=`pwd`
 cd $target
 drush --nocolor -y si $profile --db-url=$dburl --account-name=$accountname --account-pass=$accountpass --db-su=$mysqlrootuser --db-su-pw=$mysqlrootpass --site-name="${sitename}"
 
+set +e
 for x in `find sites/all/themes -type d -maxdepth 1`; do
     cd $x
     compass compile
     cd -
 done
+set -e
 
 drush cc all
 drush en -y $settings_module
 
 if [ ! -z "$remoteUrl" ]; then
+    ssh $remoteUrl drush -r $remotePath cc all
     ssh $remoteUrl drush -r $remotePath sql-dump > dump.sql
     drush sqlq "source dump.sql"
     rsync --delete -a $remoteUrl:$remotePath/sites/default/files sites/default
