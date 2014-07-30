@@ -131,7 +131,7 @@ cd $target
 drush --nocolor -y si $profile --db-url=$dburl --account-name=$accountname --account-pass=$accountpass --db-su=$mysqlrootuser --db-su-pw=$mysqlrootpass --site-name="${sitename}"
 
 set +e
-for x in `find sites/all/themes -type d -maxdepth 1`; do
+for x in sites/all/themes/*; do
     cd $x
     compass compile
     cd -
