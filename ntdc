@@ -127,24 +127,18 @@ fi
 
 drush --nocolor make $wc $makefile $target
 CWD=`pwd`
-cd $target
+cd $CWD/$target
 drush --nocolor -y si $profile --db-url=$dburl --account-name=$accountname --account-pass=$accountpass --db-su=$mysqlrootuser --db-su-pw=$mysqlrootpass --site-name="${sitename}"
-
-set +e
-for x in sites/all/themes/*; do
-    cd $x
-    compass compile
-    cd -
-done
-set -e
 
 drush cc all
 drush en -y $settings_module
 
 if [ ! -z "$remoteUrl" ]; then
+    sqlfile=/tmp/$_manifest-dump.sql
     ssh $remoteUrl drush -r $remotePath cc all
-    ssh $remoteUrl drush -r $remotePath sql-dump > dump.sql
-    drush sqlq "source dump.sql"
+    ssh $remoteUrl drush -r $remotePath sql-dump > $sqlfile
+    drush sqlq "source $sqlfile"
+    rm $sqlfile
     rsync --delete -a $remoteUrl:$remotePath/sites/default/files sites/default
     drush cc all
 fi
@@ -164,6 +158,17 @@ fi
 if [ ! -z "$htaccess" ]; then
     wget -O .htaccess $htaccess
 fi
+
+set +e
+for x in sites/all/themes/*; do
+    if [ -d $CWD/$x ]; then
+        cd $CWD/$x
+        compass compile
+        cd -
+    fi
+done
+set -e
+
 
 cd $CWD
 
