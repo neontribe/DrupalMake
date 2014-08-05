@@ -1,5 +1,6 @@
-makefile=http://192.168.21.95/manifest/vanillafudge.make
+makefile=http://cottage.neontribe.org/manifest/vanillafudge.make
 # remoteUrl=root@192.168.21.44
 # remotePath=/home/wightlocations/www/NeonTABS/demosite
 profile=neontabs_profile
 sitename=VanillaFudge
+settings_module=ntzz_settings

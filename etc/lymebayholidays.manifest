@@ -1,6 +1,8 @@
-makefile=http://192.168.21.95/manifest/lymebayholidays.make
+makefile=http://cottage.neontribe.org/manifest/lymebayholidays.make
 remoteUrl=root@192.168.21.44
-remotePath=/home/lymebayholidays/www
+remotePath=/home/cottage_staging/www/lymebayholidays/latest
 profile=neontabs_profile
 sitename=LymeBay
 settings_module=neontabs_cust_lb
+robots=http://cottage.neontribe.org/manifest/robots.txt
+htaccess=http://cottage.neontribe.org/manifest/lymebayholidays.htaccess

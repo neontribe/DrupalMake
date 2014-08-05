@@ -1,0 +1,13 @@
+{
+  "name": "drupal-make-web-interface",
+  "version": "0.0.0",
+  "description": "A web interface for the Drupal Make tool",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.6.1",
+    "tweak": "^1.1.0"
+  }
+}

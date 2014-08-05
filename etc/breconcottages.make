@@ -2,7 +2,7 @@
 core = 7.x
 
 api = 2
-projects[drupal][version] = "7.28"
+projects[drupal][version] = "7.27"
 
 ; Modules
 ; Please fill the following out. Type may be one of get, git, bzr or svn,
@@ -75,11 +75,11 @@ projects[nt_tabs][version] = "unknown"
 
 ; Please fill the following out. Type may be one of get, git, bzr or svn,
 ; and url is the url of the download.
-projects[ntzz_modules][download][type] = "git"
-projects[ntzz_modules][download][url] = "git@bitbucket.org:neontabs/ntzz_modules.git"
-projects[ntzz_modules][type] = "module"
-projects[ntzz_modules][subdir] = "custom"
-projects[ntzz_modules][version] = "unknown"
+projects[ntbr_modules][download][type] = "git"
+projects[ntbr_modules][download][url] = "git@bitbucket.org:neontabs/ntbr_modules.git"
+projects[ntbr_modules][type] = "module"
+projects[ntbr_modules][subdir] = "custom"
+projects[ntbr_modules][version] = "unknown"
 
 projects[references][subdir] = "contrib"
 projects[references][version] = "2.1"
@@ -109,6 +109,9 @@ projects[xmlsitemap][subdir] = "contrib"
 projects[xmlsitemap][version] = "2.0"
 
 ; Themes
+projects[ntbr_theme][type] = "theme"
+projects[ntbr_theme][download][type] = "git"
+projects[ntbr_theme][download][url] = "git@bitbucket.org:neontabs/ntbr_theme.git"
 
 ; Libraries
 ; Please fill the following out. Type may be one of get, git, bzr or svn,
