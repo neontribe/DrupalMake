@@ -88,9 +88,9 @@ user=$user`echo ${VERSION}| sed -e "s/\./_/g"`
 VHOST=../../etc/apache/vhost.conf
 VHOSTSSL=../../etc/apache/vhost-ssl.conf
 
-mkdir -p debian/countryhideaways/etc/apache2/sites-available
-cp $VHOST debian/countryhideaways/etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}.conf
-cp $VHOSTSSL debian/countryhideaways/etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-ssl.conf
+mkdir -p debian/countryhideaways/var/tmp/
+cp $VHOST debian/countryhideaways/var/tmp/${PACKAGE_NAME}-${VERSION}.conf
+cp $VHOSTSSL debian/countryhideaways/var/tmp/${PACKAGE_NAME}-${VERSION}-ssl.conf
 
 cat >debian/postinst<<EOF
 #!/bin/bash
@@ -130,8 +130,8 @@ case "\$1" in
 
         set -x
         SITENAME=${PACKAGE_NAME}.${TLD}
-        sed "s/SITENAME/\$SITENAME/g" debian/files/vhost.conf > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}.conf
-        sed "s/SITENAME/\$SITENAME/g" debian/files/vhost-ssl.conf > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-ssl.conf
+        sed "s/SITENAME/\$SITENAME/g" /var/tmp/${PACKAGE_NAME}-${VERSION}.conf > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}.conf
+        sed "s/SITENAME/\$SITENAME/g" /var/tmp/${PACKAGE_NAME}-${VERSION}-ssl.conf > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-ssl.conf
         set +x
 
         if [ ! -f /etc/ssl/certs/sitekey.pem ]; then
