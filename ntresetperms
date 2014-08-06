@@ -1,8 +1,10 @@
 #!/bin/bash
 
+set -e
+
 CWD=`dirname $0`/..
 
-USAGE="$0 [-h] [-y drupaluser drupalgroup webuser webgroup] [-p path]"
+USAGE="$0 [-h] [-p path] [-y drupaluser drupalgroup webuser webgroup]"
 
 function help
 {
@@ -177,3 +179,5 @@ else
 fi
 
 set +x
+
+set +e

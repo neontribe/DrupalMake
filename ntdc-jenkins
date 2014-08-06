@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e
+
+BRANDCODE=$1
+BUILD_NUMBER=$2
+FULLNAME=$3
+# BRANCH='master'
+
+BUILD_TARGET=$FULLNAME.$BUILD_NUMBER
+DEPLOY_TARGET=/var/www/sites/ci/$BRANDCODE/$FULLNAME.$BUILD_NUMBER
+DB=ci_$BRANDCODE_$BUILD_NUMBER
+
+ntdc -v -m root:b191wkm -u mysql://$DB:$DB@localhost/$DB -t $BUILD_TARGET https://neontabs.neontribe.org/manifest/$FULLNAME.manifest
+mkdir -p `dirname $DEPLOY_TARGET`
+cp -r $BUILD_TARGET $DEPLOY_TARGET
+sudo /usr/local/bin/ntresetperms -p $DEPLOY_TARGET -y jenkins jenkins www-data www-data
+# ln -sf $DEPLOY_TARGET `dirname $DE$DEPLOY_TARGET`/$BRANCH
+
+set +e

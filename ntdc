@@ -3,6 +3,9 @@
 NO_ARGS=0
 USAGE="`basename $0` [-u dburl] [-n accountname] [-p accountpass] [-m mysqlroot] [-t target] manifest"
 
+# exit on errors, for CI
+set -e
+
 if [ $# -eq "$NO_ARGS" ]  # Script invoked with no command-line args?
 then
     echo $USAGE
@@ -19,6 +22,7 @@ URL.
 -n  Account name for the admin account, defaults to superadmin
 -p  Password for the admin account, defaults to password
 -m  The mysql root user:password, this will default to root:$MYSQL_ROOTPASS
+-d  Delete and overwrite, don't backup existing files
 -t  The deployment target locally, defaults to minifest
 -w  Working copy, include .git folder in the modules
 -v  Be verbose (adds a set -x to the main script)
@@ -38,12 +42,13 @@ EOF
     exit 1
 fi
 
-while getopts "u:n:p:m:t:wv" options; do
+while getopts "u:n:p:m:t:wdv" options; do
     case $options in
         u)  dburl="$OPTARG";;
         n)  accountname="$OPTARG";;
         p)  accountpass="$OPTARG";;
         m)  mysqlroot="$OPTARG";;
+        m)  delete="1";;
         t)  target="$OPTARG";;
         w)  wc="--working-copy";;
         v)  verbose="-v";;
@@ -98,6 +103,7 @@ if [ ! -z "$verbose" ]; then
     echo -e "Mysql root username:\t${mysqlrootuser}";
     echo -e "Mysql root password:\t${mysqlrootpass}";
     echo -e "Target dir:\t\t${target}";
+    echo -e "Working copy:\t${wc}";
 
     set -x
 
@@ -105,33 +111,48 @@ fi
 
 time=`date +"%y%m%d_%H-%M"`
 
-if [ -f "$_manifest.manifest" ]; then
+if [ -f "$_manifest.manifest" ] && [ -z "$delete" ]; then
     mv $_manifest.manifest $_manifest.manifest.$time
+else
+    rm -rf "$_manifest.manifest"
 fi
 wget -q $manifest
 source $_manifest.manifest
 
-if [ -d "$target" ]; then
+set +e
+if [ -d "$target" ] && [ -z "$delete" ]; then
+    mkdir -p $target/sites/default/sql
+    if [ ! -e $target/sites/default/sql/.htaccess ]; then
+        if [ -d /etc/apache2/conf-enabled ]; then
+            # Cheap way of testing for apache 2.4 on ubuntu, unreliable but it works
+            echo 'Require all denied' > $target/sites/default/sql/.htaccess
+        else
+            echo 'Order Deny Allow' > $target/sites/default/sql/.htaccess
+            echo 'Deny from All' > $target/sites/default/sql/.htaccess
+        fi
+    fi
+    drush -r $target cc all
+    drush -r $target sql-dump > $sqlfile
     mv $target $target.$time
+else
+    rm -rf $target
 fi
+set -e
 
-drush make $wc $makefile $target
+drush --nocolor make $wc $makefile $target
 CWD=`pwd`
-cd $target
-drush -y si $profile --db-url=$dburl --account-name=$accountname --account-pass=$accountpass --db-su=$mysqlrootuser --db-su-pw=$mysqlrootpass --site-name="${sitename}"
-
-for x in `find sites/all/themes -type d -maxdepth 1`; do
-    cd $x
-    compass compile
-    cd -
-done
+cd $CWD/$target
+drush --nocolor -y si $profile --db-url=$dburl --account-name=$accountname --account-pass=$accountpass --db-su=$mysqlrootuser --db-su-pw=$mysqlrootpass --site-name="${sitename}"
 
 drush cc all
 drush en -y $settings_module
 
 if [ ! -z "$remoteUrl" ]; then
-    ssh $remoteUrl drush -r $remotePath sql-dump > dump.sql
-    drush sqlq "source dump.sql"
+    sqlfile=/tmp/$_manifest-dump.sql
+    ssh $remoteUrl drush -r $remotePath cc all
+    ssh $remoteUrl drush -r $remotePath sql-dump > $sqlfile
+    drush sqlq "source $sqlfile"
+    rm $sqlfile
     rsync --delete -a $remoteUrl:$remotePath/sites/default/files sites/default
     drush cc all
 fi
@@ -151,6 +172,17 @@ fi
 if [ ! -z "$htaccess" ]; then
     wget -O .htaccess $htaccess
 fi
+
+set +e
+for x in sites/all/themes/*; do
+    if [ -d $CWD/$x ]; then
+        cd $CWD/$x
+        compass compile
+        cd -
+    fi
+done
+set -e
+
 
 cd $CWD
 
