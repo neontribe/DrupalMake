@@ -68,9 +68,15 @@ mkdir -p $PACKAGE_NAME/$PACKAGE_NAME-$VERSION
 CWD=`pwd`
 cd $DRUPAL_ROOT
 tar -zcf ${CWD}/${PACKAGE_NAME}/${PACKAGE_NAME}-${VERSION}/${PACKAGE_NAME}.tgz * .htaccess
-cd -
 
+cd -
 cd $PACKAGE_NAME/$PACKAGE_NAME-$VERSION
+
+VHOST=../../etc/apache/vhost.conf
+VHOSTSSL=../../etc/apache/vhost-ssl.conf
+cp $VHOST ${PACKAGE_NAME}-${VERSION}.conf
+cp $VHOSTSSL ${PACKAGE_NAME}-${VERSION}-ssl.conf
+
 dh_make -c GPL -e ${PACKAGE_NAME}${VERSION}@neontribe.co.uk -n -s -i -y 
 
 rm debian/*.{ex,EX}
@@ -84,13 +90,6 @@ EOF
 
 user=`echo ${PACKAGE_NAME} | cut -c 1-4`
 user=$user`echo ${VERSION}| sed -e "s/\./_/g"`
-
-VHOST=../../etc/apache/vhost.conf
-VHOSTSSL=../../etc/apache/vhost-ssl.conf
-
-mkdir -p debian/countryhideaways/var/tmp/
-cp $VHOST debian/countryhideaways/var/tmp/${PACKAGE_NAME}-${VERSION}.conf
-cp $VHOSTSSL debian/countryhideaways/var/tmp/${PACKAGE_NAME}-${VERSION}-ssl.conf
 
 cat >debian/postinst<<EOF
 #!/bin/bash
@@ -128,11 +127,9 @@ case "\$1" in
         chmod 444 /var/www/${PACKAGE_NAME}-${VERSION}/sites/default/settings.php
         chmod 555 /var/www/${PACKAGE_NAME}-${VERSION}/sites/default
 
-        set -x
         SITENAME=${PACKAGE_NAME}.${TLD}
         sed "s/SITENAME/\$SITENAME/g" /var/tmp/${PACKAGE_NAME}-${VERSION}.conf > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}.conf
         sed "s/SITENAME/\$SITENAME/g" /var/tmp/${PACKAGE_NAME}-${VERSION}-ssl.conf > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-ssl.conf
-        set +x
 
         if [ ! -f /etc/ssl/certs/sitekey.pem ]; then
             ln -s /etc/ssl/certs/ssl-cert.pem /etc/ssl/certs/site.pem
@@ -147,7 +144,7 @@ case "\$1" in
         echo "redirect all traffic from hhtp to the hhtps site?  * This will disable (but not"
         echo "delete) the existing apache configuration and replace it with new.  It will"
         echo "also move the existing /var/www/html folder out of the way and replace it with"
-        echo "a symlink to /var/www/html/${PACKAGE_NAME}-${VERSION}."
+        echo "a symlink to /var/www/${PACKAGE_NAME}-${VERSION}."
         echo "Set up Apache? (Y/n)"
         a=1
         until [ "\$a" == 'y' ] || [ "\$a" == 'Y' ] || [ "\$a" == 'n' ] || [ "\$a" == 'N' ]; do
@@ -159,9 +156,9 @@ case "\$1" in
                 a2dissite \$x
             done
             if [ -d /var/www ]; then
-                mv /var/www /var/www.\`date +"%y-%m-%d_%H-%M"\`
+                mv /var/www/html /var/www/html.\`date +"%y-%m-%d_%H-%M"\`
             fi
-            ln -sf /var/www/${PACKAGE_NAME}-${VERSION} /var/www
+            ln -sf /var/www/${PACKAGE_NAME}-${VERSION} /var/www/html
             a2ensite ${PACKAGE_NAME}-${VERSION}.conf
             a2ensite ${PACKAGE_NAME}-${VERSION}-ssl.conf
             a2enmod ssl
@@ -169,6 +166,7 @@ case "\$1" in
         else
             echo "Copied config files into site-avaiable"
         fi
+        set +x
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
