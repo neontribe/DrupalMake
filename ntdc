@@ -119,11 +119,25 @@ fi
 wget -q $manifest
 source $_manifest.manifest
 
+set +e
 if [ -d "$target" ] && [ -z "$delete" ]; then
+    mkdir -p $target/sites/default/sql
+    if [ ! -e $target/sites/default/sql/.htaccess ]; then
+        if [ -d /etc/apache2/conf-enabled ]; then
+            # Cheap way of testing for apache 2.4 on ubuntu, unreliable but it works
+            echo 'Require all denied' > $target/sites/default/sql/.htaccess
+        else
+            echo 'Order Deny Allow' > $target/sites/default/sql/.htaccess
+            echo 'Deny from All' > $target/sites/default/sql/.htaccess
+        fi
+    fi
+    drush -r $target cc all
+    drush -r $target sql-dump > $sqlfile
     mv $target $target.$time
 else
     rm -rf $target
 fi
+set -e
 
 drush --nocolor make $wc $makefile $target
 CWD=`pwd`

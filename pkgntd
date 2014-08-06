@@ -80,6 +80,10 @@ EOF
 user=`echo ${PACKAGE_NAME} | cut -c 1-4`
 user=$user`echo ${VERSION}| sed -e "s/\./_/g"`
 
+echo "####################################~~"
+pwd
+echo "####################################~~"
+
 cat >debian/postinst<<EOF
 #!/bin/bash
 
@@ -124,6 +128,34 @@ case "\$1" in
         echo "    AllowOverride All" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
         echo "  </Directory>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
         echo "</VirtualHost>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+
+        echo "<IfModule mod_ssl.c>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "  <VirtualHost _default_:443>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "   ServerAdmin webmaster@localhost" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "   DocumentRoot /var/www/html/countryhideaways-1.0.0" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "   ErrorLog ${APACHE_LOG_DIR}/error.log" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "   CustomLog ${APACHE_LOG_DIR}/access.log combined" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "   SSLEngine on" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "   SSLCertificateFile      /etc/ssl/certs/ssl-cert-snakeoil.pem" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "   SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "   <FilesMatch "\.(cgi|shtml|phtml|php)$">" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "      SSLOptions +StdEnvVars" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "   </FilesMatch>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "   <Directory /usr/lib/cgi-bin>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "     SSLOptions +StdEnvVars" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "   </Directory>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "   BrowserMatch "MSIE [2-6]" \"" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "     nokeepalive ssl-unclean-shutdown \"" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "     downgrade-1.0 force-response-1.0" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "   # MSIE 7 and newer should be able to use keepalive" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "   BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "  <Directory /var/www/html/${PACKAGE_NAME}-${VERSION}>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "    AllowOverride All" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "  </Directory>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo " </VirtualHost>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "</IfModule>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        echo "# vim: syntax=apache ts=4 sw=4 sts=4 sr noet" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+
 
         echo "<VirtualHost *:80>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
         echo "  ServerAdmin webmaster@localhost" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
