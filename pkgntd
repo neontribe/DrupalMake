@@ -18,6 +18,7 @@ USAGE="$0 /path/to/drupal version"
 
 DRUPAL_ROOT=$1
 VERSION=$2
+TLD=$4
 
 if [ -z "$DRUPAL_ROOT" ]; then
     echo $USAGE
@@ -29,6 +30,10 @@ if [ -z "$VERSION" ]; then
     echo $USAGE
     echo You must specify a version number
     exit 1
+fi
+
+if [ -z "$TLD" ]; then
+    TLD='co.uk'
 fi
 
 PACKAGE_NAME=`basename $DRUPAL_ROOT`
@@ -71,25 +76,29 @@ dh_make -c GPL -e ${PACKAGE_NAME}${VERSION}@neontribe.co.uk -n -s -i -y
 rm debian/*.{ex,EX}
 
 # Add php dependancies that chef missed
-sed -i -e '/^Depends:/ s/$/ php-apc, php5-gd, php5-curl, php5-mysql, php5-imagick, php5-memcache, php5-memcached, ruby-compass /' debian/control
+sed -i -e '/^Depends:/ s/$/ apache2, libapache2-mod-php5, mysql-client, mysql-server, php-apc, php5-gd, php5-curl, php5-mysql, php5-imagick, php5-memcache, php5-memcached, ruby-compass /' debian/control
 
 cat >debian/install<<EOF
-${PACKAGE_NAME}.tgz /var/www/html/${PACKAGE_NAME}-${VERSION}
+${PACKAGE_NAME}.tgz /var/tmp/${PACKAGE_NAME}-${VERSION}
 EOF
 
 user=`echo ${PACKAGE_NAME} | cut -c 1-4`
 user=$user`echo ${VERSION}| sed -e "s/\./_/g"`
 
-echo "####################################~~"
-pwd
-echo "####################################~~"
+VHOST=../../etc/apache/vhost.conf
+VHOSTSSL=../../etc/apache/vhost-ssl.conf
+
+mkdir -p debian/countryhideaways/etc/apache2/sites-available
+cp $VHOST debian/countryhideaways/etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}.conf
+cp $VHOSTSSL debian/countryhideaways/etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-ssl.conf
 
 cat >debian/postinst<<EOF
 #!/bin/bash
 
 case "\$1" in
     configure)
-        tar -C /var/www/html/${PACKAGE_NAME}-${VERSION} -zxf /var/www/html/${PACKAGE_NAME}-${VERSION}/${PACKAGE_NAME}.tgz
+        mkdir /var/www/${PACKAGE_NAME}-${VERSION}
+        tar -C /var/www/${PACKAGE_NAME}-${VERSION} -zxf /var/tmp/${PACKAGE_NAME}-${VERSION}/${PACKAGE_NAME}.tgz
         # get root password
         echo "Enter the root password for your MySQL instance:"
         stty -echo
@@ -108,72 +117,58 @@ case "\$1" in
         mysql -u root -p\$mysqlroot -h localhost -s -e "GRANT ALL PRIVILEGES ON $user.* TO $user@localhost;"
 
         # echo inport db
-        mysql -u root -p\$mysqlroot -h localhost $user < /var/www/html/${PACKAGE_NAME}-${VERSION}/sites/default/sql/site.sql
+        mysql -u root -p\$mysqlroot -h localhost $user < /var/www/${PACKAGE_NAME}-${VERSION}/sites/default/sql/site.sql
 
         # update settings.php
-        chmod 666 /var/www/html/${PACKAGE_NAME}-${VERSION}/sites/default/settings.php
-        chmod 777 /var/www/html/${PACKAGE_NAME}-${VERSION}/sites/default
-        sed -i "s/      'database' => .*/      'database' => '$user',/g" /var/www/html/${PACKAGE_NAME}-${VERSION}/sites/default/settings.php
-        sed -i "s/      'username' => .*/      'username' => '$user',/g" /var/www/html/${PACKAGE_NAME}-${VERSION}/sites/default/settings.php
-        sed -i "s/      'password' => .*/      'password' => '$user',/g" /var/www/html/${PACKAGE_NAME}-${VERSION}/sites/default/settings.php
-        chmod 444 /var/www/html/${PACKAGE_NAME}-${VERSION}/sites/default/settings.php
-        chmod 555 /var/www/html/${PACKAGE_NAME}-${VERSION}/sites/default
+        chmod 666 /var/www/${PACKAGE_NAME}-${VERSION}/sites/default/settings.php
+        chmod 777 /var/www/${PACKAGE_NAME}-${VERSION}/sites/default
+        sed -i "s/      'database' => .*/      'database' => '$user',/g" /var/www/${PACKAGE_NAME}-${VERSION}/sites/default/settings.php
+        sed -i "s/      'username' => .*/      'username' => '$user',/g" /var/www/${PACKAGE_NAME}-${VERSION}/sites/default/settings.php
+        sed -i "s/      'password' => .*/      'password' => '$user',/g" /var/www/${PACKAGE_NAME}-${VERSION}/sites/default/settings.php
+        chmod 444 /var/www/${PACKAGE_NAME}-${VERSION}/sites/default/settings.php
+        chmod 555 /var/www/${PACKAGE_NAME}-${VERSION}/sites/default
 
-        echo "<VirtualHost *:80>" > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "  ServerAdmin webmaster@localhost" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "  DocumentRoot /var/www/html/${PACKAGE_NAME}-${VERSION}" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "  ErrorLog /var/log/apache2/error.log" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "  CustomLog /var/log/apache2/access.log combined" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "  <Directory /var/www/html/${PACKAGE_NAME}-${VERSION}>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "    AllowOverride All" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "  </Directory>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "</VirtualHost>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        set -x
+        SITENAME=${PACKAGE_NAME}.${TLD}
+        sed "s/SITENAME/\$SITENAME/g" debian/files/vhost.conf > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}.conf
+        sed "s/SITENAME/\$SITENAME/g" debian/files/vhost-ssl.conf > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-ssl.conf
+        set +x
 
-        echo "<IfModule mod_ssl.c>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "  <VirtualHost _default_:443>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "   ServerAdmin webmaster@localhost" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "   DocumentRoot /var/www/html/countryhideaways-1.0.0" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "   ErrorLog ${APACHE_LOG_DIR}/error.log" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "   CustomLog ${APACHE_LOG_DIR}/access.log combined" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "   SSLEngine on" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "   SSLCertificateFile      /etc/ssl/certs/ssl-cert-snakeoil.pem" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "   SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "   <FilesMatch "\.(cgi|shtml|phtml|php)$">" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "      SSLOptions +StdEnvVars" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "   </FilesMatch>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "   <Directory /usr/lib/cgi-bin>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "     SSLOptions +StdEnvVars" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "   </Directory>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "   BrowserMatch "MSIE [2-6]" \"" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "     nokeepalive ssl-unclean-shutdown \"" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "     downgrade-1.0 force-response-1.0" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "   # MSIE 7 and newer should be able to use keepalive" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "   BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "  <Directory /var/www/html/${PACKAGE_NAME}-${VERSION}>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "    AllowOverride All" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "  </Directory>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo " </VirtualHost>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "</IfModule>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
-        echo "# vim: syntax=apache ts=4 sw=4 sts=4 sr noet" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-24.conf
+        if [ ! -f /etc/ssl/certs/sitekey.pem ]; then
+            ln -s /etc/ssl/certs/ssl-cert.pem /etc/ssl/certs/site.pem
+            echo "WARNIG: Using snake oil certs.  Overwrite site.key & site.pem in"
+            echo "/etc/ssl/certs/ with valid certs"
+        fi
+        if [ ! -f /etc/ssl/private/ssl-cert.key ]; then
+            ln -s /etc/ssl/private/ssl-cert.key /etc/ssl/certs/site.key
+        fi
 
-
-        echo "<VirtualHost *:80>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "  ServerAdmin webmaster@localhost" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "  DocumentRoot /var/www/html/${PACKAGE_NAME}-${VERSION}" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "  <Directory />" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "    Options FollowSymLinks" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "    AllowOverride None" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "  </Directory>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "  <Directory /var/www/html/${PACKAGE_NAME}-${VERSION}>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "    Options Indexes FollowSymLinks MultiViews" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "    AllowOverride All" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "    Order allow,deny" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "    allow from all" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "  </Directory>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "  ErrorLog /var/log/apache2/error.log" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "  LogLevel warn" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "  CustomLog /var/log/apache2/access.log combined" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
-        echo "</VirtualHost>" >> /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-22.conf
+        echo "Do you want to set up apache to server this site on https://${SITENAME} and"
+        echo "redirect all traffic from hhtp to the hhtps site?  * This will disable (but not"
+        echo "delete) the existing apache configuration and replace it with new.  It will"
+        echo "also move the existing /var/www/html folder out of the way and replace it with"
+        echo "a symlink to /var/www/html/${PACKAGE_NAME}-${VERSION}."
+        echo "Set up Apache? (Y/n)"
+        a=1
+        until [ "\$a" == 'y' ] || [ "\$a" == 'Y' ] || [ "\$a" == 'n' ] || [ "\$a" == 'N' ]; do
+            read a
+        done
+        if [ "\$a" == 'y' ] || [ "\$a" == 'Y' ]; then
+            a2dissite default
+            for x in /etc/apache2/sites-enabled; do
+                a2dissite \$x
+            done
+            if [ -d /var/www ]; then
+                mv /var/www /var/www.\`date +"%y-%m-%d_%H-%M"\`
+            fi
+            ln -sf /var/www/${PACKAGE_NAME}-${VERSION} /var/www
+            a2ensite ${PACKAGE_NAME}-${VERSION}.conf
+            a2ensite ${PACKAGE_NAME}-${VERSION}-ssl.conf
+            a2enmod ssl
+            a2enmod rewrite
+        else
+            echo "Copied config files into site-avaiable"
+        fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
