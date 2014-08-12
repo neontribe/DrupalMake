@@ -9,7 +9,6 @@ COL_BLUE=$ESC_SEQ"34;01m"
 COL_MAGENTA=$ESC_SEQ"35;01m"
 COL_CYAN=$ESC_SEQ"36;01m"
 
-set -e
 set -x
 
 USAGE="$0 /path/to/drupal version"
@@ -66,36 +65,45 @@ mkdir -p $PACKAGE_NAME/$PACKAGE_NAME-$VERSION
 # cp -r $DRUPAL_ROOT $PACKAGE_NAME/$PACKAGE_NAME-$VERSION
 # tar & gzip the site.  the packager can't handle .info files
 CWD=`pwd`
+
+VHOST=etc/apache/vhost.conf
+VHOSTSSL=etc/apache/vhost-ssl.conf
+cp $VHOST $DRUPAL_ROOT/${PACKAGE_NAME}-${VERSION}.conf
+cp $VHOSTSSL $DRUPAL_ROOT/${PACKAGE_NAME}-${VERSION}-ssl.conf
+# cp $VHOST ${CWD}/${PACKAGE_NAME}/${PACKAGE_NAME}-${VERSION}/${PACKAGE_NAME}-${VERSION}.conf
+# cp $VHOSTSSL ${CWD}/${PACKAGE_NAME}/${PACKAGE_NAME}-${VERSION}/${PACKAGE_NAME}-${VERSION}-ssl.conf
+
 cd $DRUPAL_ROOT
 tar -zcf ${CWD}/${PACKAGE_NAME}/${PACKAGE_NAME}-${VERSION}/${PACKAGE_NAME}.tgz * .htaccess
 
-cd -
-cd $PACKAGE_NAME/$PACKAGE_NAME-$VERSION
+cd $CWD/$PACKAGE_NAME/$PACKAGE_NAME-$VERSION
 
-VHOST=../../etc/apache/vhost.conf
-VHOSTSSL=../../etc/apache/vhost-ssl.conf
-cp $VHOST ${PACKAGE_NAME}-${VERSION}.conf
-cp $VHOSTSSL ${PACKAGE_NAME}-${VERSION}-ssl.conf
+pwd
+ls
+pause 5
 
 dh_make -c GPL -e ${PACKAGE_NAME}${VERSION}@neontribe.co.uk -n -s -i -y 
 
-rm debian/*.{ex,EX}
+cd $CWD/$PACKAGE_NAME/$PACKAGE_NAME-$VERSION
+
+rm $CWD/$PACKAGE_NAME/$PACKAGE_NAME-$VERSION/debian/*.{ex,EX}
 
 # Add php dependancies that chef missed
-sed -i -e '/^Depends:/ s/$/ apache2, libapache2-mod-php5, mysql-client, mysql-server, php-apc, php5-gd, php5-curl, php5-mysql, php5-imagick, php5-memcache, php5-memcached, ruby-compass /' debian/control
+sed -i -e '/^Depends:/ s/$/ apache2, libapache2-mod-php5, mysql-client, mysql-server, php-apc, php5-gd, php5-curl, php5-mysql, php5-imagick, php5-memcache, php5-memcached, ruby-compass /' $CWD/$PACKAGE_NAME/$PACKAGE_NAME-$VERSION/debian/control
 
-cat >debian/install<<EOF
+cat >$CWD/$PACKAGE_NAME/$PACKAGE_NAME-$VERSION/debian/install<<EOF
 ${PACKAGE_NAME}.tgz /var/tmp/${PACKAGE_NAME}-${VERSION}
 EOF
 
 user=`echo ${PACKAGE_NAME} | cut -c 1-4`
 user=$user`echo ${VERSION}| sed -e "s/\./_/g"`
 
-cat >debian/postinst<<EOF
+cat >$CWD/$PACKAGE_NAME/$PACKAGE_NAME-$VERSION/debian/postinst<<EOF
 #!/bin/bash
 
 case "\$1" in
     configure)
+	set -x
         mkdir /var/www/${PACKAGE_NAME}-${VERSION}
         tar -C /var/www/${PACKAGE_NAME}-${VERSION} -zxf /var/tmp/${PACKAGE_NAME}-${VERSION}/${PACKAGE_NAME}.tgz
         # get root password
@@ -128,8 +136,9 @@ case "\$1" in
         chmod 555 /var/www/${PACKAGE_NAME}-${VERSION}/sites/default
 
         SITENAME=${PACKAGE_NAME}.${TLD}
-        sed "s/SITENAME/\$SITENAME/g" /var/tmp/${PACKAGE_NAME}-${VERSION}.conf > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}.conf
-        sed "s/SITENAME/\$SITENAME/g" /var/tmp/${PACKAGE_NAME}-${VERSION}-ssl.conf > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-ssl.conf
+        sed "s/SITENAME/\$SITENAME/g" /var/www/${PACKAGE_NAME}-${VERSION}/${PACKAGE_NAME}-${VERSION}.conf > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}.conf
+        sed "s/SITENAME/\$SITENAME/g" /var/www/${PACKAGE_NAME}-${VERSION}/${PACKAGE_NAME}-${VERSION}-ssl.conf > /etc/apache2/sites-available/${PACKAGE_NAME}-${VERSION}-ssl.conf
+	# TODO remove the coinf files
 
         if [ ! -f /etc/ssl/certs/sitekey.pem ]; then
             ln -s /etc/ssl/certs/ssl-cert.pem /etc/ssl/certs/site.pem
@@ -151,10 +160,11 @@ case "\$1" in
             read a
         done
         if [ "\$a" == 'y' ] || [ "\$a" == 'Y' ]; then
-            a2dissite default
-            for x in /etc/apache2/sites-enabled; do
-                a2dissite \$x
-            done
+            #a2dissite default
+            #for x in /etc/apache2/sites-enabled; do
+            #    a2dissite \$x
+            #done
+            rm /etc/apache2/sites-enabled/*
             if [ -d /var/www ]; then
                 mv /var/www/html /var/www/html.\`date +"%y-%m-%d_%H-%M"\`
             fi
@@ -183,6 +193,6 @@ esac
 exit 0
 EOF
 
-cd - && cd $PACKAGE_NAME/$PACKAGE_NAME-$VERSION
+cd $CWD/$PACKAGE_NAME/$PACKAGE_NAME-$VERSION
 debuild -b -i -us -uc
 set +x
