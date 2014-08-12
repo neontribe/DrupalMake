@@ -150,10 +150,14 @@ drush en -y $settings_module
 if [ ! -z "$remoteUrl" ]; then
     sqlfile=/tmp/$_manifest-dump.sql
     ssh $remoteUrl drush -r $remotePath cc all
-    ssh $remoteUrl drush -r $remotePath sql-dump > $sqlfile
+    ssh $remoteUrl drush -r $remotePath --gzip sql-dump > ${sqlfile}.gz
+    gzip -d ${sqlfile}.gz
     drush sqlq "source $sqlfile"
     rm $sqlfile
-    rsync --delete -a $remoteUrl:$remotePath/sites/default/files sites/default
+    if [ ! -z "$verbose" ]; then
+        progress=" --progress "
+    fi
+    rsync --delete -az --exclude="files/tabs-imagecache" $progress $remoteUrl:$remotePath/sites/default/files sites/default
     drush cc all
 fi
 
