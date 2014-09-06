@@ -26,6 +26,10 @@ URL.
 -t  The deployment target locally, defaults to minifest
 -w  Working copy, include .git folder in the modules
 -v  Be verbose (adds a set -x to the main script)
+-b  Prepare a branch test.  This will make the value -u to use the specified
+    value as the db details and target.  e.g. -b ch14 is the same as -t ch14 
+    -u mysql://ch14:ch14@localhost/ch14 -w
+    If both -b and -u/-t are specified the the -u/-t will override the -b
 
 Sample manifest file:
 
@@ -42,7 +46,7 @@ EOF
     exit 1
 fi
 
-while getopts "u:n:p:m:t:wdv" options; do
+while getopts "u:n:p:m:t:b:wdv" options; do
     case $options in
         u)  dburl="$OPTARG";;
         n)  accountname="$OPTARG";;
@@ -52,6 +56,7 @@ while getopts "u:n:p:m:t:wdv" options; do
         t)  target="$OPTARG";;
         w)  wc="--working-copy";;
         v)  verbose="-v";;
+        b)  branch="$OPTARG";;
     esac
 done
 
@@ -63,6 +68,14 @@ if [ -z $manifest ]
 then
     echo $USAGE
     exit 1
+fi
+
+if [ -z "$dburl" ]; then
+    if [ ! -z "$branch" ]; then
+        dburl="mysql://$branch:$branch@localhost/$branch"
+    else
+        dburl="mysql://$_manifest:$_manifest@localhost/$_manifest"
+    fi
 fi
 
 if [ -z "$dburl" ]; then
@@ -91,7 +104,11 @@ if [ -z "$mysqlrootpass" ]; then
 fi
 
 if [ -z "$target" ]; then
-    target=$_manifest
+    if [ ! -z "$branch" ]; then
+        target=$branch
+    else
+        target=$_manifest
+    fi
 fi
 
 if [ ! -z "$verbose" ]; then
