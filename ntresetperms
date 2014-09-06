@@ -161,23 +161,18 @@ echo drupal dir = $CWD
 
 set -x
 
-find . ! -name . -prune -type d -exec chmod 775 {} \;
-find . ! -name . -prune -type f -exec chmod 664 {} \;
-
 chown -R $druser:$drgroup $CWD
 chown -R $webuser:$webgroup $CWD/sites/*/files
 
 chmod a-w $CWD/sites/*/settings.php
 
-if [ -z "$setfacl" ]; then
-    find . ! -name . -prune -type d -exec chmod 1775 {} \;
-    find . ! -name . -prune -type f -exec chmod 1664 {} \;
-else
+find . ! -name . -prune -type d -exec chmod 1775 {} \;
+find . ! -name . -prune -type f -exec chmod 1664 {} \;
+
+if [ ! -z "$setfacl" ]; then
     sudo setfacl -R  -m   u:$webuser:rwx -m u:$druser:rwx -m g:$drgroup:rwx $CWD/sites/*/files
     sudo setfacl -dR -m   u:$webuser:rwx -m u:$druser:rwx -m g:$drgroup:rwx $CWD/sites/*/files
     sudo setfacl -R  -m d:u:$webuser:rwx -m u:$druser:rwx -m g:$drgroup:rwx $CWD/sites/*/files
 fi
-
-set +x
 
 set +e
