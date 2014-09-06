@@ -167,7 +167,7 @@ find . ! -name . -prune -type f -exec chmod 664 {} \;
 chown -R $druser:$drgroup $CWD
 chown -R $webuser:$webgroup $CWD/sites/*/files
 
-chown a-w $CWD/sites/*/settings.php
+chmod a-w $CWD/sites/*/settings.php
 
 if [ -z "$setfacl" ]; then
     find . ! -name . -prune -type d -exec chmod 1775 {} \;
